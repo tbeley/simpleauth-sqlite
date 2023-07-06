@@ -1,5 +1,6 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
+import DarkModeToggler from "./DarkModeToggler";
 
 const Navbar = () => {
   return (
@@ -12,12 +13,17 @@ const Navbar = () => {
               Simple Auth
             </span>
           </a>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
+          <div className="flex items-center">
+            <SignedOut>
+              <SignInButton>
+                <button className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">Sign in</button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+            <DarkModeToggler />
+          </div>
         </div>
       </nav>
       <nav className="bg-gray-50 dark:bg-gray-700">

@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
+        <body className={`${inter.className} bg-gray-50 dark:bg-gray-800`}>
           <Toaster position="bottom-center" />
           <Navbar />
           {children}

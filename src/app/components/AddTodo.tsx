@@ -36,8 +36,8 @@ const AddTodo = () => {
   };
 
   return (
-    <div className="container mt-24 mx-auto">
-      <h2 className="text-4xl font-extrabold dark:text-white mb-12">
+    <div>
+      <h2 className="text-4xl font-extrabold dark:text-white my-12">
         Add todo
       </h2>
       <div className="relative z-0 w-full mb-6 group text-left">

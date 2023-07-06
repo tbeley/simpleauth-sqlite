@@ -29,9 +29,9 @@ export default async function Todos() {
             >
               <path
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13"
               />
             </svg>

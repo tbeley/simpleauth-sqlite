@@ -1,12 +1,17 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 const AddTodo = () => {
   const router = useRouter();
   const [newTodo, setNewTodo] = useState("");
 
   const addTodo = async () => {
+    if (newTodo.length <= 0) {
+      toast.error(`Please enter a todo to add!`);
+      return;
+    }
     const response = await fetch(`/api/todo`, {
       method: "POST",
       headers: {
@@ -16,7 +21,12 @@ const AddTodo = () => {
         title: newTodo,
       }),
     });
-    router.refresh();
+    if (response.status === 200) {
+      toast.success(`Todo "${newTodo}" added successfully!`);
+      router.refresh();
+    } else {
+      `Something went wrong while adding "${newTodo}"! Please try again later.`;
+    }
   };
 
   return (

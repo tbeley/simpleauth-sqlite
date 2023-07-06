@@ -2,6 +2,7 @@
 
 import { Todo } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 export default function Todo({ todo }: { todo: Todo }) {
   const router = useRouter();
@@ -13,9 +14,16 @@ export default function Todo({ todo }: { todo: Todo }) {
       },
       body: JSON.stringify(todo),
     });
-    const json = await response.json();
-    router.refresh();
+    if (response.status === 200) {
+      toast.success(`Todo "${todo.title}" updated successfully!`);
+      router.refresh();
+    } else {
+      toast.error(
+        `Something went wrong while updating "${todo.title}"! Please try again later.`
+      );
+    }
   };
+
   const deleteTodo = async () => {
     const response = await fetch(`/api/todo`, {
       method: "DELETE",
@@ -24,8 +32,14 @@ export default function Todo({ todo }: { todo: Todo }) {
       },
       body: JSON.stringify(todo),
     });
-    const json = await response.json();
-    router.refresh();
+    if (response.status === 200) {
+      toast.success(`Todo "${todo.title}" deleted successfully!`);
+      router.refresh();
+    } else {
+      toast.error(
+        `Something went wrong while deleting "${todo.title}"! Please try again later.`
+      );
+    }
   };
 
   const badge = () => {

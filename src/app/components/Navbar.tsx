@@ -14,18 +14,25 @@ const Navbar = () => {
               Simple Auth
             </span>
           </Link>
-          <div className="flex items-center">
+          <div className="flex flex-col gap-3 sm:flex-row items-center justify-center">
+            <DarkModeToggler />
             <SignedOut>
               <Link href="/sign-in">
-                <button className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">
+                <button className="inline-flex items-center justify-center px-5 text-base font-medium text-center text-white bg-indigo-700 rounded-lg hover:bg-indigo-800 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-900">
                   Sign in
                 </button>
               </Link>
             </SignedOut>
             <SignedIn>
-              <UserButton afterSignOutUrl="/" />
+              <UserButton
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    userButtonBox: "border-2 border-white rounded-full",
+                  },
+                }}
+              />
             </SignedIn>
-            <DarkModeToggler />
           </div>
         </div>
       </nav>

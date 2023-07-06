@@ -4,25 +4,30 @@ import { ChangeEvent, useEffect, useState } from "react";
 
 const DarkModeToggler = () => {
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-
-  const localStorage = window.localStorage;
+  const [localStorage, setLocalStorage] = useState<Storage>();
 
   useEffect(() => {
-    if (localStorage.getItem("darkModeEnabled")) {
+    setLocalStorage(() => window.localStorage);
+  }, []);
+
+  useEffect(() => {
+    if (localStorage && localStorage.getItem("darkModeEnabled")) {
       setDarkModeEnabled(true);
       document.getElementsByTagName("html")[0].classList.add("dark");
     }
   }, [localStorage]);
 
   const toggle = (e: ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked;
-    setDarkModeEnabled(checked);
-    if (checked) {
-      localStorage.setItem("darkModeEnabled", "true");
-      document.getElementsByTagName("html")[0].classList.add("dark");
-    } else {
-      localStorage.removeItem("darkModeEnabled");
-      document.getElementsByTagName("html")[0].classList.remove("dark");
+    if (localStorage) {
+      const checked = e.target.checked;
+      setDarkModeEnabled(checked);
+      if (checked) {
+        localStorage.setItem("darkModeEnabled", "true");
+        document.getElementsByTagName("html")[0].classList.add("dark");
+      } else {
+        localStorage.removeItem("darkModeEnabled");
+        document.getElementsByTagName("html")[0].classList.remove("dark");
+      }
     }
   };
 

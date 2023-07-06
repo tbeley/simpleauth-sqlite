@@ -1,13 +1,19 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 const AddTodo = () => {
   const router = useRouter();
+  const { isSignedIn } = useUser();
   const [newTodo, setNewTodo] = useState("");
 
   const addTodo = async () => {
+    if (!isSignedIn) {
+      toast.error(`Please sign in to add a todo!`);
+      return;
+    }
     if (newTodo.length <= 0) {
       toast.error(`Please enter a todo to add!`);
       return;

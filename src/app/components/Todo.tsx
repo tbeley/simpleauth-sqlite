@@ -1,12 +1,19 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import { Todo } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 export default function Todo({ todo }: { todo: Todo }) {
   const router = useRouter();
+  const { isSignedIn } = useUser();
+
   const update = async () => {
+    if (!isSignedIn) {
+      toast.error(`Please sign in to update a todo!`);
+      return;
+    }
     const response = await fetch(`/api/todo`, {
       method: "PUT",
       headers: {
@@ -25,6 +32,10 @@ export default function Todo({ todo }: { todo: Todo }) {
   };
 
   const deleteTodo = async () => {
+    if (!isSignedIn) {
+      toast.error(`Please sign in to delete a todo!`);
+      return;
+    }
     const response = await fetch(`/api/todo`, {
       method: "DELETE",
       headers: {
@@ -72,7 +83,7 @@ export default function Todo({ todo }: { todo: Todo }) {
         <button
           type="button"
           onClick={deleteTodo}
-          className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+          className={` text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2`}
         >
           Delete
         </button>

@@ -1,7 +1,14 @@
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import {
+  ClerkLoading,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 import Image from "next/image";
 import DarkModeToggler from "./DarkModeToggler";
 import Link from "next/link";
+import Spinner from "./Spinner";
 
 const Navbar = () => {
   return (
@@ -24,6 +31,9 @@ const Navbar = () => {
               </Link>
             </SignedOut>
             <SignedIn>
+              <ClerkLoading>
+                <Spinner />
+              </ClerkLoading>
               <UserButton
                 afterSignOutUrl="/"
                 appearance={{

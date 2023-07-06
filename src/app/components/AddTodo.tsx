@@ -3,11 +3,13 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import Spinner from "./Spinner";
 
 const AddTodo = () => {
   const router = useRouter();
   const { isSignedIn } = useUser();
   const [newTodo, setNewTodo] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const addTodo = async () => {
     if (!isSignedIn) {
@@ -18,6 +20,7 @@ const AddTodo = () => {
       toast.error(`Please enter a todo to add!`);
       return;
     }
+    setLoading(true);
     const response = await fetch(`/api/todo`, {
       method: "POST",
       headers: {
@@ -29,10 +32,12 @@ const AddTodo = () => {
     });
     if (response.status === 200) {
       toast.success(`Todo "${newTodo}" added successfully!`);
+      setNewTodo("");
       router.refresh();
     } else {
       `Something went wrong while adding "${newTodo}"! Please try again later.`;
     }
+    setLoading(false);
   };
 
   return (
@@ -49,6 +54,7 @@ const AddTodo = () => {
           placeholder=""
           required
           onChange={(e) => setNewTodo(e.target.value)}
+          value={newTodo}
         />
         <label
           htmlFor="newTodo"
@@ -59,9 +65,10 @@ const AddTodo = () => {
         <button
           type="button"
           onClick={addTodo}
+          disabled={loading}
           className="mt-6 text-white bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:focus:ring-indigo-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
         >
-          Add
+          {loading ? <Spinner /> : "Add todo"}
         </button>
       </div>
     </div>

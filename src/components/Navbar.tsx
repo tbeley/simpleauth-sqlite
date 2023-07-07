@@ -1,10 +1,4 @@
-import {
-  ClerkLoading,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkLoading, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import DarkModeToggler from "./DarkModeToggler";
 import Link from "next/link";

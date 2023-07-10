@@ -3,64 +3,44 @@
 import { useEffect, useState } from "react";
 import Moon from "./Moon";
 import Sun from "./Sun";
-import { useUser } from "@clerk/nextjs";
 
 const DarkModeToggler = () => {
-  const { user } = useUser();
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-  const localStorage = window?.localStorage;
-  const htmlElement = document.getElementsByTagName("html")[0];
 
-  useEffect(() => {
-    if (localStorage?.getItem("darkModeEnabled")) {
+  const themeCheck = () => {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
       setDarkModeEnabled(true);
-    }
-  }, [localStorage]);
-
-  useEffect(() => {
-    if (user?.unsafeMetadata["Dark Mode"] === undefined) return;
-    setDarkModeEnabled(user.unsafeMetadata["Dark Mode"] === true);
-  }, [user?.unsafeMetadata]);
-
-  useEffect(() => {
-    if (darkModeEnabled) {
-      htmlElement.classList.add("dark");
     } else {
-      htmlElement.classList.remove("dark");
-    }
-  }, [darkModeEnabled, htmlElement]);
-
-  const updateUser = async () => {
-    if (user) {
-      try {
-        const response = await user.update({
-          unsafeMetadata: { "Dark Mode": !darkModeEnabled },
-        });
-        return response;
-      } catch (err) {
-        console.error("error", err);
-      }
+      document.documentElement.classList.remove("dark");
+      setDarkModeEnabled(false);
     }
   };
 
-  const toggle = async () => {
-    if (user) {
-      const response = await updateUser();
-      if (response) {
-        setDarkModeEnabled(response.unsafeMetadata["Dark Mode"] === true);
-      }
+  useEffect(() => {
+    themeCheck();
+  }, [darkModeEnabled]);
+
+  useEffect(() => {
+    themeCheck();
+  }, []);
+
+  const toggleTheme = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme) {
+      localStorage.setItem("theme", theme === "dark" ? "light" : "dark");
     } else {
-      if (localStorage.getItem("darkModeEnabled")) {
-        localStorage.removeItem("darkModeEnabled");
-      } else {
-        localStorage.setItem("darkModeEnabled", "true");
-      }
-      setDarkModeEnabled(!darkModeEnabled);
+      localStorage.setItem("theme", "dark");
     }
+    setDarkModeEnabled(!darkModeEnabled);
   };
 
   return (
-    <div className="cursor-pointer" onClick={toggle}>
+    <div className="cursor-pointer" onClick={toggleTheme}>
       {darkModeEnabled ? <Sun /> : <Moon />}
     </div>
   );

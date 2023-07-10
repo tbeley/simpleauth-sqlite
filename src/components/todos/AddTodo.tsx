@@ -16,7 +16,7 @@ const AddTodo = ({ access }: IAddTodoProps) => {
   const [loading, setLoading] = useState(false);
 
   const addTodo = async () => {
-    if (!isSignedIn) {
+    if (!isSignedIn && access !== "public") {
       toast.error(`Please sign in to add a todo!`);
       return;
     }
@@ -33,7 +33,7 @@ const AddTodo = ({ access }: IAddTodoProps) => {
       body: JSON.stringify({
         access,
         title: newTodo,
-        userId: user.id ?? null,
+        userId: user ? user.id : null,
       }),
     });
     if (response.status === 200) {

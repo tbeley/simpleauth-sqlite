@@ -6,7 +6,11 @@ import { ITodo } from "@/interfaces/ITodo";
 
 export const revalidate = 0;
 
-export default async function Page({ params }: { params: { access: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: { access: "public" | "private" | "registered" };
+}) {
   const { access } = params;
   let todos: ITodo[] = [];
 

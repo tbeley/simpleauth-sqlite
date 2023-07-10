@@ -9,12 +9,12 @@ import { ITodo } from "@/interfaces/ITodo";
 
 export default function TodoEl({ todo }: { todo: ITodo }) {
   const router = useRouter();
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn } = useUser();
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   const update = async () => {
-    if (!isSignedIn) {
+    if (!isSignedIn && todo.access !== "public") {
       toast.error(`Please sign in to update a todo!`);
       return;
     }
@@ -38,7 +38,7 @@ export default function TodoEl({ todo }: { todo: ITodo }) {
   };
 
   const deleteTodo = async () => {
-    if (!isSignedIn) {
+    if (!isSignedIn && todo.access !== "public") {
       toast.error(`Please sign in to delete a todo!`);
       return;
     }

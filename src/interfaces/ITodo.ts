@@ -4,4 +4,5 @@ export interface ITodo {
   completed: Boolean;
   createdAt: Date;
   userId?: string;
+  access?: "public" | "registered" | "private";
 }

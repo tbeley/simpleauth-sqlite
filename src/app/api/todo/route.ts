@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { auth } from "@clerk/nextjs";
 
 export async function PUT(req: Request) {
   const todo = await req.json();
+
+  const { userId } = auth();
+  if (!userId && todo.access !== "public") {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
   if (todo.access === "public") {
     const response = await prisma.publicTodo.update({
@@ -43,6 +49,11 @@ export async function PUT(req: Request) {
 export async function POST(req: Request) {
   const newTodo = await req.json();
 
+  const { userId } = auth();
+  if (!userId && newTodo.access !== "public") {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
   if (newTodo.access === "public") {
     const data: Prisma.PublicTodoCreateInput = {
       title: newTodo.title,
@@ -72,6 +83,11 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   const { id, access } = await req.json();
+
+  const { userId } = auth();
+  if (!userId && access !== "public") {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
   if (access === "public") {
     const response = await prisma.publicTodo.delete({

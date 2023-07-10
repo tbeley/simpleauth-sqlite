@@ -1,6 +1,6 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
+import { SignedOut, UserButton } from "@clerk/nextjs";
 import { Collapse, CollapseInterface } from "flowbite";
 import Image from "next/image";
 import Link from "next/link";
@@ -43,12 +43,14 @@ const Navbar = () => {
           <div className="flex text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
             <UserButton afterSignOutUrl="/" />
           </div>
-          <Link
-            href="/todos/public"
-            className="text-indigo-700 hover:text-white border border-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-indigo-400 dark:text-indigo-400 dark:hover:text-white dark:hover:bg-indigo-500 dark:focus:ring-indigo-900"
-          >
-            Sign In
-          </Link>
+          <SignedOut>
+            <Link
+              href="/auth/sign-in"
+              className="text-indigo-700 hover:text-white border border-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-indigo-400 dark:text-indigo-400 dark:hover:text-white dark:hover:bg-indigo-500 dark:focus:ring-indigo-900"
+            >
+              Sign In
+            </Link>
+          </SignedOut>
           <div className="flex mx-3 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
             <DarkModeToggler />
           </div>

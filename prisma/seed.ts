@@ -3,19 +3,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.todo.create({
+  await prisma.publicTodo.create({
     data: {
       title: "Learn Next.js",
     },
   });
-  await prisma.todo.create({
+  await prisma.registeredTodo.create({
     data: {
       title: "Learn Prisma",
-    },
-  });
-  await prisma.todo.create({
-    data: {
-      title: "Learn GraphQL",
     },
   });
 }

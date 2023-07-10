@@ -1,15 +1,15 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Todo } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import Spinner from "./Spinner";
+import Spinner from "../Spinner";
+import { ITodo } from "@/interfaces/ITodo";
 
-export default function Todo({ todo }: { todo: Todo }) {
+export default function TodoEl({ todo }: { todo: ITodo }) {
   const router = useRouter();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -50,7 +50,8 @@ export default function Todo({ todo }: { todo: Todo }) {
       },
       body: JSON.stringify(todo),
     });
-    if (response.status === 200) {
+    const { status } = await response.json();
+    if (status === 200) {
       toast.success(`Todo "${todo.title}" deleted successfully!`);
       router.refresh();
     } else {

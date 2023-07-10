@@ -1,20 +1,23 @@
-import prisma from "@/lib/prisma";
-import Todo from "@/components/Todo";
-import AddTodo from "@/components/AddTodo";
+"use client";
 
-export const revalidate = 0;
+import AddTodo from "@/components/todos/AddTodo";
+import { notFound, usePathname } from "next/navigation";
+import { ReactNode } from "react";
 
-export default async function Todos() {
-  const todos = await prisma.todo.findMany({
-    orderBy: {
-      id: "asc",
-    },
-  });
+type IOptions = "public" | "private" | "registered";
+
+const options: IOptions[] = ["public", "private", "registered"];
+
+const Template = ({ children }: { children: ReactNode }) => {
+  const pathname = usePathname().split("/")[2] as IOptions;
+  if (!options.includes(pathname)) {
+    return notFound();
+  }
 
   return (
     <main className="w-100 container mx-auto">
       <h1 className="my-8 text-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-        TODOS CRUD
+        {`${pathname[0].toUpperCase() + pathname.slice(1)} todos`}
       </h1>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -31,14 +34,12 @@ export default async function Todos() {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {todos.map((todo) => (
-              <Todo key={todo.id} todo={todo} />
-            ))}
-          </tbody>
+          <tbody>{children}</tbody>
         </table>
       </div>
-      <AddTodo />
+      <AddTodo access={pathname} />
     </main>
   );
-}
+};
+
+export default Template;

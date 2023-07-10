@@ -1,36 +1,100 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function PUT(req: Request) {
   const todo = await req.json();
-  const response = await prisma.todo.update({
-    where: {
-      id: todo.id,
-    },
-    data: {
-      completed: !todo.completed,
-    },
-  });
-  return NextResponse.json({ status: 200, todo: response });
+
+  if (todo.access === "public") {
+    const response = await prisma.publicTodo.update({
+      where: {
+        id: todo.id,
+      },
+      data: {
+        completed: !todo.completed,
+      },
+    });
+    return NextResponse.json({ status: 200, todo: response });
+  } else if (todo.access === "registered") {
+    const response = await prisma.registeredTodo.update({
+      where: {
+        id: todo.id,
+      },
+      data: {
+        completed: !todo.completed,
+      },
+    });
+    return NextResponse.json({ status: 200, todo: response });
+  } else if (todo.access === "private") {
+    const response = await prisma.privateTodo.update({
+      where: {
+        id: todo.id,
+      },
+      data: {
+        completed: !todo.completed,
+      },
+    });
+    return NextResponse.json({ status: 200, todo: response });
+  } else {
+    return NextResponse.json({ status: 400, message: "Invalid access type" });
+  }
 }
 
 export async function POST(req: Request) {
   const newTodo = await req.json();
-  const response = await prisma.todo.create({
-    data: {
+
+  if (newTodo.access === "public") {
+    const data: Prisma.PublicTodoCreateInput = {
       title: newTodo.title,
       completed: false,
-    },
-  });
-  return NextResponse.json({ status: 200, todo: response });
+    };
+    const response = await prisma.publicTodo.create({ data });
+    return NextResponse.json({ status: 200, todo: response });
+  } else if (newTodo.access === "registered") {
+    const data: Prisma.RegisteredTodoCreateInput = {
+      title: newTodo.title,
+      completed: false,
+    };
+    const response = await prisma.registeredTodo.create({ data });
+    return NextResponse.json({ status: 200, todo: response });
+  } else if (newTodo.access === "private") {
+    const data: Prisma.PrivateTodoCreateInput = {
+      title: newTodo.title,
+      completed: false,
+      userId: newTodo.userId,
+    };
+    const response = await prisma.privateTodo.create({ data });
+    return NextResponse.json({ status: 200, todo: response });
+  } else {
+    return NextResponse.json({ status: 400, message: "Invalid access type" });
+  }
 }
 
 export async function DELETE(req: Request) {
-  const todo = await req.json();
-  const response = await prisma.todo.delete({
-    where: {
-      id: todo.id,
-    },
-  });
-  return NextResponse.json({ status: 204, todo: response });
+  const { id, access } = await req.json();
+
+  if (access === "public") {
+    const response = await prisma.publicTodo.delete({
+      where: {
+        id,
+      },
+    });
+    return NextResponse.json({ status: 200, todo: response });
+  } else if (access === "registered") {
+    const response = await prisma.registeredTodo.delete({
+      where: {
+        id,
+      },
+    });
+    return NextResponse.json({ status: 200, todo: response });
+  } else if (access === "private") {
+    const response = await prisma.privateTodo.delete({
+      where: {
+        id: id,
+      },
+    });
+    return NextResponse.json({ status: 200, todo: response });
+  } else {
+    return NextResponse.json({ status: 400, message: "Invalid access type" });
+  }
 }

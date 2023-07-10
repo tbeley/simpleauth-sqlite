@@ -13,9 +13,24 @@ datasource db {
   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
 }
 
-model Todo {
+model PublicTodo {
   id        Int      @id @default(autoincrement())
   title     String
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model RegisteredTodo {
+  id        Int      @id @default(autoincrement())
+  title     String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model PrivateTodo {
+  id        Int      @id @default(autoincrement())
+  title     String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    String
 }

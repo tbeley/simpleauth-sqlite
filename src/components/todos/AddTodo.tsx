@@ -3,11 +3,15 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import Spinner from "./Spinner";
+import Spinner from "../Spinner";
 
-const AddTodo = () => {
+interface IAddTodoProps {
+  access: "public" | "private" | "registered";
+}
+
+const AddTodo = ({ access }: IAddTodoProps) => {
   const router = useRouter();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const [newTodo, setNewTodo] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -27,7 +31,9 @@ const AddTodo = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        access,
         title: newTodo,
+        userId: user.id ?? null,
       }),
     });
     if (response.status === 200) {

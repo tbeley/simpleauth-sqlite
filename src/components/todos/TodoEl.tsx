@@ -1,59 +1,60 @@
 "use client";
-
-import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import Spinner from "../Spinner";
 import { ITodo } from "@/interfaces/ITodo";
 
-export default function TodoEl({ todo }: { todo: ITodo }) {
-  const router = useRouter();
-  const { isSignedIn } = useUser();
-  const [loadingUpdate, setLoadingUpdate] = useState(false);
+interface ITodoElProps {
+  todo: ITodo;
+  setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>;
+  access: "public" | "private" | "registered";
+}
+
+export default function TodoEl({ todo, setTodos, access }: ITodoElProps) {
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   const update = async () => {
-    if (!isSignedIn && todo.access !== "public") {
-      toast.error(`Please sign in to update a todo!`);
-      return;
-    }
-    setLoadingUpdate(true);
     const response = await fetch(`/api/todo`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(todo),
+      body: JSON.stringify({
+        ...todo,
+        access,
+      }),
     });
-    if (response.status === 200) {
+    const { status } = await response.json();
+    if (status === 200) {
       toast.success(`Todo "${todo.title}" updated successfully!`);
-      router.refresh();
+      setTodos((prev) => {
+        const index = prev.findIndex((t) => t.id === todo.id);
+        prev[index].completed = !prev[index].completed;
+        return [...prev];
+      });
     } else {
       toast.error(
         `Something went wrong while updating "${todo.title}"! Please try again later.`
       );
     }
-    setLoadingUpdate(false);
   };
 
   const deleteTodo = async () => {
-    if (!isSignedIn && todo.access !== "public") {
-      toast.error(`Please sign in to delete a todo!`);
-      return;
-    }
     setLoadingDelete(true);
     const response = await fetch(`/api/todo`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(todo),
+      body: JSON.stringify({
+        ...todo,
+        access,
+      }),
     });
     const { status } = await response.json();
     if (status === 200) {
       toast.success(`Todo "${todo.title}" deleted successfully!`);
-      router.refresh();
+      setTodos((prev) => prev.filter((t) => t.id !== todo.id));
     } else {
       toast.error(
         `Something went wrong while deleting "${todo.title}"! Please try again later.`
@@ -81,7 +82,9 @@ export default function TodoEl({ todo }: { todo: ITodo }) {
 
   return (
     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-      <td className="px-6 py-4">{loadingUpdate ? <Spinner /> : <Badge />}</td>
+      <td className="px-6 py-4">
+        <Badge />
+      </td>
       <td
         scope="row"
         className="px-6 py-4 font-medium text-gray-900 dark:text-white"

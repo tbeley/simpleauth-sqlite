@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import DarkModeToggler from "./DarkModeToggler";
+import DarkModeToggler from "./darkMode/Toggler";
 
 const activeLink =
   "block py-2 pl-3 pr-4 text-white bg-indigo-700 rounded md:bg-transparent md:text-indigo-700 md:p-0 md:dark:text-indigo-500";
@@ -35,7 +35,7 @@ const Navbar = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="/" className="flex items-center">
           <Image src="/todo.png" width={32} height={32} alt="Todo Logo" />
-          <span className="self-center text-2xl ml-4 font-semibold whitespace-nowrap dark:text-white">
+          <span className="hidden min-[420px]:block self-center text-2xl ml-4 font-semibold whitespace-nowrap dark:text-white">
             Simple Auth
           </span>
         </Link>

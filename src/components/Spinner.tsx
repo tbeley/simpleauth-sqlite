@@ -1,17 +1,11 @@
-const Spinner = ({
-  width = 4,
-  height = 4,
-}: {
-  width?: number;
-  height?: number;
-}) => {
-  const classes = `inline w-${width} h-${height}  text-white animate-spin`;
-
+const Spinner = ({ size }: { size?: string }) => {
   return (
     <svg
       aria-hidden="true"
       role="status"
-      className={classes}
+      className={`inline ${
+        size === "md" ? "h-16 w-16" : "h-4 w-4"
+      } text-white animate-spin`}
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

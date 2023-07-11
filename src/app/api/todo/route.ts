@@ -2,6 +2,42 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { auth } from "@clerk/nextjs";
+import { notFound } from "next/navigation";
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const access = searchParams.get("access");
+
+  if (access === "public") {
+    const response = await prisma.publicTodo.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
+    return NextResponse.json({ status: 200, todos: response });
+  } else if (access === "private") {
+    const { userId } = auth();
+    if (!userId) return notFound();
+    const response = await prisma.privateTodo.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+    return NextResponse.json({ status: 200, todos: response });
+  } else if (access === "registered") {
+    const response = await prisma.registeredTodo.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
+    return NextResponse.json({ status: 200, todos: response });
+  } else {
+    return NextResponse.json({ status: 400, message: "Invalid access type" });
+  }
+}
 
 export async function PUT(req: Request) {
   const todo = await req.json();

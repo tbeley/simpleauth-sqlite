@@ -1,15 +1,18 @@
 "use client";
+
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
 import Spinner from "../Spinner";
+import { toast } from "react-hot-toast";
+import { ITodo } from "@/interfaces/ITodo";
 
 interface IAddTodoProps {
   access: "public" | "private" | "registered";
+  setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>;
 }
 
-const AddTodo = ({ access }: IAddTodoProps) => {
+export default function AddTodo({ access, setTodos }: IAddTodoProps) {
   const router = useRouter();
   const { isSignedIn, user } = useUser();
   const [newTodo, setNewTodo] = useState("");
@@ -36,10 +39,11 @@ const AddTodo = ({ access }: IAddTodoProps) => {
         userId: user ? user.id : null,
       }),
     });
-    if (response.status === 200) {
+    const { status, todo } = await response.json();
+    if (status === 200) {
       toast.success(`Todo "${newTodo}" added successfully!`);
       setNewTodo("");
-      router.refresh();
+      setTodos((prev) => [...prev, todo]);
     } else {
       `Something went wrong while adding "${newTodo}"! Please try again later.`;
     }
@@ -47,38 +51,55 @@ const AddTodo = ({ access }: IAddTodoProps) => {
   };
 
   return (
-    <div>
-      <h2 className="text-4xl font-extrabold dark:text-white my-12">
-        Add todo
-      </h2>
-      <div className="relative z-0 w-full mb-6 group text-left">
-        <input
-          type="text"
-          name="newTodo"
-          id="newTodo"
-          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-indigo-500 focus:outline-none focus:ring-0 focus:border-indigo-600 peer"
-          placeholder=""
-          required
-          onChange={(e) => setNewTodo(e.target.value)}
-          value={newTodo}
-        />
+    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+      <td
+        scope="row"
+        className="px-6 py-4 font-medium text-gray-900 dark:text-white"
+        colSpan={3}
+      >
         <label
-          htmlFor="newTodo"
-          className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-indigo-600 peer-focus:dark:text-indigo-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          htmlFor="add-todo"
+          className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
         >
-          Enter new todo
+          Add todo
         </label>
-        <button
-          type="button"
-          onClick={addTodo}
-          disabled={loading}
-          className="mt-6 text-white bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-indigo-300 dark:focus:ring-indigo-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        >
-          {loading ? <Spinner /> : "Add todo"}
-        </button>
-      </div>
-    </div>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none">
+            <svg
+              className="w-4 h-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 18 18"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 1v16M1 9h16"
+              />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="add-todo"
+            className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
+            placeholder="Learn Next.js and Tailwind CSS..."
+            required
+            onChange={(e) => setNewTodo(e.target.value)}
+            value={newTodo}
+          />
+          <button
+            type="button"
+            className="text-white absolute right-2.5 bottom-2.5 bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+            onClick={addTodo}
+            disabled={loading}
+          >
+            {loading ? <Spinner /> : "Add todo"}
+          </button>
+        </div>
+      </td>
+    </tr>
   );
-};
-
-export default AddTodo;
+}

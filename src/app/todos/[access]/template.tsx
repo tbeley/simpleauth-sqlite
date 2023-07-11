@@ -1,6 +1,5 @@
 "use client";
 
-import AddTodo from "@/components/todos/AddTodo";
 import { notFound, usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
@@ -25,7 +24,7 @@ const Template = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <main className="w-100 container mx-auto">
+    <main className="container mx-auto">
       <h1 className="my-8 text-center text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
         {title}
       </h1>
@@ -50,7 +49,6 @@ const Template = ({ children }: { children: ReactNode }) => {
           <tbody>{children}</tbody>
         </table>
       </div>
-      <AddTodo access={pathname} />
     </main>
   );
 };
